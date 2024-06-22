@@ -12,6 +12,7 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
+        registration_key: ''
     });
 
     useEffect(() => {
@@ -97,6 +98,22 @@ export default function Register() {
                     />
 
                     <InputError message={errors.password_confirmation} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="registration_key" value="Register key" />
+
+                    <TextInput
+                        id="registration_key"
+                        name="registration_key"
+                        value={data.registration_key}
+                        className="mt-1 block w-full"
+                        autoComplete="new-password"
+                        onChange={(e) => setData('registration_key', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.registration_key} className="mt-2" />
                 </div>
 
                 <div className="flex items-center justify-end mt-4">
