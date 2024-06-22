@@ -6,6 +6,8 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
+import SecondaryButton from "@/Components/SecondaryButton.jsx";
+import {router} from "@inertiajs/core";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -66,7 +68,7 @@ export default function Login({ status, canResetPassword }) {
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="block mt-4">
+                <div className="mt-4 flex justify-between">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
@@ -75,9 +77,6 @@ export default function Login({ status, canResetPassword }) {
                         />
                         <span className="ms-2 text-sm text-gray-600">Remember me</span>
                     </label>
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
@@ -86,10 +85,26 @@ export default function Login({ status, canResetPassword }) {
                             Forgot your password?
                         </Link>
                     )}
+                </div>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
+                <div className="mt-2">
+                    <PrimaryButton
+                        className="w-full !block"
+                        disabled={processing}
+                    >
+                        Login
                     </PrimaryButton>
+                </div>
+                <div className="mt-1">
+                    <SecondaryButton
+                        className="w-full !block"
+                        disabled={processing}
+                        onClick={() => {
+                            router.get(route("register"));
+                        }}
+                    >
+                        Register
+                    </SecondaryButton>
                 </div>
             </form>
         </GuestLayout>
