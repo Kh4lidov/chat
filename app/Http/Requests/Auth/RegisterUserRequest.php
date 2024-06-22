@@ -28,31 +28,21 @@ class RegisterUserRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'registration_key' => ['required', 'string', 'exists:registration_tokens,token']
+            'registration_key' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $token = RegistrationToken::whereRaw('BINARY token = ?', [$value])->first();
+
+                    if (!$token) {
+                        return $fail('Выбранный регистрационный ключ недействителен.');
+                    }
+
+                    if ($token->registrations >= $token->usage_limit) {
+                        return $fail('Лимит активаций по данному ключу исчерпан.');
+                    }
+                },
+            ],
         ];
-    }
-
-    public function messages()
-    {
-        return [
-            'registration_key.exists' => 'Выбранный регистрационный ключ недействителен.'
-        ];
-    }
-
-    public function withValidator($validator): void
-    {
-        $validator->after(function ($validator){
-            $this->ensureRegistrationTokenIsValid($validator);
-        });
-
-    }
-
-    protected function ensureRegistrationTokenIsValid($validator): void
-    {
-        $token = RegistrationToken::where('token', $this->get('registration_key'))->first();
-
-        if ($token && $token->registrations >= $token->usage_limit) {
-            $validator->errors()->add('registration_key', 'Лимит активаций по данному ключу исчерпан.');
-        }
     }
 }
