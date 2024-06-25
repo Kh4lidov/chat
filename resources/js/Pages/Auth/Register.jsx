@@ -138,7 +138,7 @@ export default function Register() {
                     <Turnstile
                         language="en"
                         theme="light"
-                        sitekey="0x4AAAAAAAdTM6e_yoRTVynI"
+                        sitekey="2x00000000000000000000AB"
                         onVerify={(token) => {
                             setData("token", token);
                         }}
