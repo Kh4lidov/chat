@@ -52,21 +52,26 @@ class RegisterUserRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            $token = $this->get('token');
-            $ip = $this->header('CF-Connecting-IP');
-
-            $formData = [
-                'secret' => env('TURNSTILE_SECRET_KEY'),
-                'response' => $token,
-                'remoteip' => $ip
-            ];
-
-            $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', $formData);
-            $result = $response->json();
-
-            if (!isset($result['success']) || !$result['success']) {
-                $validator->errors()->add('token', 'Cloudflare validation failed. Please try again.');
-            }
+            $this->validateWithCloudflare($validator);
         });
+    }
+
+    protected function validateWithCloudflare($validator): void
+    {
+        $token = $this->input('token');
+        $ip = $this->header('CF-Connecting-IP');
+
+        $formData = [
+            'secret' => env('TURNSTILE_SECRET_KEY'),
+            'response' => $token,
+            'remoteip' => $ip
+        ];
+
+        $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', $formData);
+        $result = $response->json();
+
+        if (!isset($result['success']) || !$result['success']) {
+            $validator->errors()->add('token', 'Cloudflare validation failed. Please try again.');
+        }
     }
 }
