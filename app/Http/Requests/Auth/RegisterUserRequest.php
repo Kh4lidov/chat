@@ -65,8 +65,7 @@ class RegisterUserRequest extends FormRequest
             $result = $response->json();
 
             if (!isset($result['success']) || !$result['success']) {
-                return response()->json($result);
-                $validator->errors()->add('token', $result);
+                $validator->errors()->add('token', 'Turnstile validation failed. Please try again.');
             }
         });
     }
