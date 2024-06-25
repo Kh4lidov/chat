@@ -64,10 +64,8 @@ class RegisterUserRequest extends FormRequest
             $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', $formData);
             $result = $response->json();
 
-            dd($result);
-
             if (!isset($result['success']) || !$result['success']) {
-                $validator->errors()->add('token', 'Turnstile validation failed. Please try again.');
+                $validator->errors()->add('token', 'Cloudflare validation failed. Please try again.');
             }
         });
     }
