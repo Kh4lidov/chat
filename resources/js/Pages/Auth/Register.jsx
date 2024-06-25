@@ -29,8 +29,6 @@ export default function Register() {
         post(route("register"));
     };
 
-    console.log(data);
-
     return (
         <GuestLayout>
             <Head title="Register" />
@@ -145,6 +143,8 @@ export default function Register() {
                             setData("token", token);
                         }}
                     />
+
+                    <InputError message={errors.token} className="mt-2" />
                 </div>
 
                 <div className="flex items-center justify-end mt-4">

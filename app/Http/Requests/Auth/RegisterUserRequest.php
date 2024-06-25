@@ -5,6 +5,7 @@ namespace App\Http\Requests\Auth;
 use App\Models\RegistrationToken;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rules;
 
 class RegisterUserRequest extends FormRequest
@@ -41,8 +42,31 @@ class RegisterUserRequest extends FormRequest
                     if ($token->registrations >= $token->usage_limit) {
                         return $fail('Лимит активаций по данному ключу исчерпан.');
                     }
+
+                    return true;
                 },
             ],
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $token = $this->get('token');
+            $ip = $this->header('CF-Connecting-IP');
+
+            $formData = [
+                'secret' => env('TURNSTILE_SECRET_KEY'),
+                'response' => $token,
+                'remoteip' => $ip
+            ];
+
+            $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', $formData);
+            $result = $response->json();
+
+            if (!isset($result['success']) || !$result['success']) {
+                $validator->errors()->add('token', 'Turnstile validation failed. Please try again.');
+            }
+        });
     }
 }
