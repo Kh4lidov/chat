@@ -142,6 +142,7 @@ export default function Register() {
                         onVerify={(token) => {
                             setData("token", token);
                         }}
+                        retry="never"
                     />
 
                     <InputError message={errors.token} className="mt-2" />
