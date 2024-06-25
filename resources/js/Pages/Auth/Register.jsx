@@ -5,7 +5,7 @@ import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
-import Turnstile from "react-turnstile";
+import Turnstile, { useTurnstile } from "react-turnstile";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -16,6 +16,8 @@ export default function Register() {
         registration_key: "",
         token: "",
     });
+
+    const turnstile = useTurnstile();
 
     useEffect(() => {
         return () => {
@@ -138,11 +140,14 @@ export default function Register() {
                     <Turnstile
                         language="en"
                         theme="light"
+                        retry="never"
                         sitekey="2x00000000000000000000AB"
                         onVerify={(token) => {
                             setData("token", token);
                         }}
-                        retry="never"
+                        onError={() => {
+                            turnstile.reset();
+                        }}
                     />
 
                     <InputError message={errors.token} className="mt-2" />
