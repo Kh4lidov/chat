@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import GuestLayout from "@/Layouts/GuestLayout";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 import Turnstile from "react-turnstile";
+import {Spinner} from "flowbite-react";
 
 export default function Register({ isProduction }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -16,6 +17,8 @@ export default function Register({ isProduction }) {
         registration_key: "",
         token: "",
     });
+
+    const [isTurnstileLoading, setIsTurnstileLoading] = useState(true);
 
     useEffect(() => {
         return () => {
@@ -135,11 +138,17 @@ export default function Register({ isProduction }) {
                 </div>
 
                 {isProduction && (
-                    <div className="mt-4">
+                    <div className="mt-4 relative">
+                        {isTurnstileLoading && (
+                            <div className="absolute inset-0 flex justify-center items-center">
+                                <Spinner color="gray" size="md" />
+                            </div>
+                        )}
                         <Turnstile
                             language="en"
                             theme="light"
                             retry="never"
+                            fixedSize="true"
                             sitekey="0x4AAAAAAAdTM6e_yoRTVynI"
                             onVerify={(token) => {
                                 setData("token", token);
@@ -147,10 +156,14 @@ export default function Register({ isProduction }) {
                             onExpire={() => {
                                 setData("token", "");
                             }}
+                            onLoad={() => {
+                                setIsTurnstileLoading(false)
+                            }}
                         />
 
                         <InputError message={errors.token} className="mt-2" />
                     </div>
+
                 )}
 
                 <div className="flex items-center justify-end mt-4">
