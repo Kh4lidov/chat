@@ -7,7 +7,7 @@ import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 import Turnstile from "react-turnstile";
 
-export default function Register() {
+export default function Register({ isProduction }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -134,22 +134,24 @@ export default function Register() {
                     />
                 </div>
 
-                <div className="mt-4">
-                    <Turnstile
-                        language="en"
-                        theme="light"
-                        retry="never"
-                        sitekey="0x4AAAAAAAdTM6e_yoRTVynI"
-                        onVerify={(token) => {
-                            setData("token", token);
-                        }}
-                        onExpire={() => {
-                            setData("token", "");
-                        }}
-                    />
+                {isProduction && (
+                    <div className="mt-4">
+                        <Turnstile
+                            language="en"
+                            theme="light"
+                            retry="never"
+                            sitekey="0x4AAAAAAAdTM6e_yoRTVynI"
+                            onVerify={(token) => {
+                                setData("token", token);
+                            }}
+                            onExpire={() => {
+                                setData("token", "");
+                            }}
+                        />
 
-                    <InputError message={errors.token} className="mt-2" />
-                </div>
+                        <InputError message={errors.token} className="mt-2" />
+                    </div>
+                )}
 
                 <div className="flex items-center justify-end mt-4">
                     <Link

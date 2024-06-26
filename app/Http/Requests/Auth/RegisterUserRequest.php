@@ -5,6 +5,7 @@ namespace App\Http\Requests\Auth;
 use App\Models\RegistrationToken;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rules;
 
@@ -25,7 +26,7 @@ class RegisterUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -47,13 +48,28 @@ class RegisterUserRequest extends FormRequest
                 },
             ],
         ];
+
+        if (App::isProduction()) {
+            $rules['token'] = ['required', 'string'];
+        }
+
+        return $rules;
+    }
+
+    public function messages()
+    {
+        return [
+            'token.required' => 'Вы должны подтвердить, что вы - не робот!'
+        ];
     }
 
     public function withValidator($validator): void
     {
-        $validator->after(function ($validator) {
-            $this->validateWithCloudflare($validator);
-        });
+        if (App::isProduction()) {
+            $validator->after(function ($validator) {
+                $this->validateWithCloudflare($validator);
+            });
+        }
     }
 
     protected function validateWithCloudflare($validator): void
@@ -71,7 +87,7 @@ class RegisterUserRequest extends FormRequest
         $result = $response->json();
 
         if (!isset($result['success']) || !$result['success']) {
-            $validator->errors()->add('token', 'Cloudflare validation failed. Please try again.');
+            $validator->errors()->add('token', 'Что-то пошло не так, попробуйте снова.');
         }
     }
 }
