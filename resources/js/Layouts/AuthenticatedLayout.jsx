@@ -14,6 +14,7 @@ import {
 } from "@heroicons/react/24/outline/index.js";
 import classNames from "classnames";
 import useSidebar from "@/Hooks/useSidebar.jsx";
+import BottomNav from "@/Components/BottomNav.jsx";
 
 export default function Authenticated({ user, children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useSidebar();
@@ -22,7 +23,7 @@ export default function Authenticated({ user, children }) {
         <div className="min-h-screen flex w-full bg-white text-slate-800">
             <div
                 className={classNames(
-                    "flex flex-col justify-between border-r pb-4 transition-all duration-300",
+                    "hidden sm:flex flex-col justify-between border-r pb-4 transition-all duration-300",
                     {
                         "w-52 px-4": isSidebarOpen,
                         "w-14 px-2": !isSidebarOpen,
@@ -161,11 +162,11 @@ export default function Authenticated({ user, children }) {
                         />
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="border-r px-4">
+                        <div className="border-r px-4 hidden sm:block">
                             <BellIcon className="h-6 w-6 cursor-pointer text-slate-700" />
                         </div>
                         <div className="ml-2 flex items-center justify-center gap-2">
-                            <div className="hidden lg:block">
+                            <div>
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
@@ -193,6 +194,12 @@ export default function Authenticated({ user, children }) {
 
                                     <Dropdown.Content>
                                         <Dropdown.Link
+                                            className="sm:hidden"
+                                            href={route("profile.edit")}
+                                        >
+                                            Settings
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
                                             href={route("logout")}
                                             method="post"
                                             as="button"
@@ -205,6 +212,7 @@ export default function Authenticated({ user, children }) {
                         </div>
                     </div>
                 </div>
+                <BottomNav />
                 <div className="h-[44rem] overflow-y-auto">{children}</div>
             </div>
         </div>
