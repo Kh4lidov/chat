@@ -213,7 +213,9 @@ export default function Authenticated({ user, children }) {
                     </div>
                 </div>
                 <BottomNav />
-                <div className="h-[44rem] overflow-y-auto">{children}</div>
+                <div className="h-[calc(100vh-4rem)] overflow-y-auto">
+                    {children}
+                </div>
             </div>
         </div>
     );
