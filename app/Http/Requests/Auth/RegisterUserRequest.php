@@ -87,7 +87,7 @@ class RegisterUserRequest extends FormRequest
             'remoteip' => $ip
         ]);
 
-        $this->dd($response);
+        dd($response);
 
         if (!$response->successful()) {
             $validator->errors()->add('token', 'Что-то пошло не так, попробуйте снова.');
