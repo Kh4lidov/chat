@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Captcha\Cloudflare\CloudflareCaptchaService;
+use App\Services\Captcha\Contracts\CaptchaServiceInterface;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
@@ -16,6 +18,10 @@ class AppServiceProvider extends ServiceProvider
         if (App::isProduction()) {
             $this->app['request']->server->set('HTTPS', true);
         }
+
+        $this->app->bind(CaptchaServiceInterface::class, function () {
+            return new CloudflareCaptchaService(config('services.cloudflare_turnstile.secret'));
+        });
     }
 
     /**

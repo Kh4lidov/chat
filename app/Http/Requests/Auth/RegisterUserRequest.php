@@ -4,13 +4,18 @@ namespace App\Http\Requests\Auth;
 
 use App\Models\RegistrationToken;
 use App\Models\User;
+use App\Services\Captcha\Contracts\CaptchaServiceInterface;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rules;
 
 class RegisterUserRequest extends FormRequest
 {
+    public function __construct(protected CaptchaServiceInterface $captchaService)
+    {
+        parent::__construct();
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -67,26 +72,22 @@ class RegisterUserRequest extends FormRequest
     {
         if (App::isProduction()) {
             $validator->after(function ($validator) {
-                $this->validateWithCloudflare($validator);
+                $this->validateWithCaptcha($validator);
             });
         }
     }
 
-    protected function validateWithCloudflare($validator): void
+    protected function validateWithCaptcha($validator): void
     {
         $token = $this->input('token');
         $ip = $this->header('CF-Connecting-IP');
 
-        $formData = [
-            'secret' => env('TURNSTILE_SECRET_KEY'),
+        $response = $this->captchaService->validate([
             'response' => $token,
             'remoteip' => $ip
-        ];
+        ]);
 
-        $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', $formData);
-        $result = $response->json();
-
-        if (!isset($result['success']) || !$result['success']) {
+        if (!$response->successful()) {
             $validator->errors()->add('token', 'Что-то пошло не так, попробуйте снова.');
         }
     }
