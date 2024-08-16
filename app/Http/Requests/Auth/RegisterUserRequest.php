@@ -87,7 +87,7 @@ class RegisterUserRequest extends FormRequest
             'remoteip' => $ip
         ]);
 
-        dd($response->json());
+        dd(config('services.cloudflare_turnstile.secret'));
 
         if (!$response->successful()) {
             $validator->errors()->add('token', 'Что-то пошло не так, попробуйте снова.');
