@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Services\Captcha\Contracts\CaptchaServiceInterface;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rules;
 
 class RegisterUserRequest extends FormRequest
@@ -83,18 +82,10 @@ class RegisterUserRequest extends FormRequest
         $token = $this->input('token');
         $ip = $this->header('CF-Connecting-IP');
 
-//        $response = $this->captchaService->validate([
-//            'response' => $token,
-//            'remoteip' => $ip
-//        ]);
-
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => config('services.cloudflare_turnstile.secret'),
+        $response = $this->captchaService->validate([
             'response' => $token,
             'remoteip' => $ip
         ]);
-
-        dd($response->json());
 
         if (!$response->successful()) {
             $validator->errors()->add('token', 'Что-то пошло не так, попробуйте снова.');

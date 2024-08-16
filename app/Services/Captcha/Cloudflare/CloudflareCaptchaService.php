@@ -13,7 +13,7 @@ class CloudflareCaptchaService implements CaptchaServiceInterface
 
     public function validate(array $data): CaptchaResponseInterface
     {
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
             'secret' => $this->secretKey,
             'response' => $data['response'],
             'remoteip' => $data['remoteip']
