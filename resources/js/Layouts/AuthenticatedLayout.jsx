@@ -11,13 +11,17 @@ import {
 import {
     BellIcon,
     ChevronLeftIcon,
+    MoonIcon,
+    SunIcon,
 } from "@heroicons/react/24/outline/index.js";
 import classNames from "classnames";
 import useSidebar from "@/Hooks/useSidebar.jsx";
 import BottomNav from "@/Components/BottomNav.jsx";
+import useTheme from "@/Hooks/UseTheme.jsx";
 
 export default function Authenticated({ user, children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useSidebar();
+    const [theme, setTheme] = useTheme();
 
     return (
         <div className="min-h-screen flex w-full bg-white text-slate-800">
@@ -30,10 +34,24 @@ export default function Authenticated({ user, children }) {
                     />
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="border-r px-4 hidden sm:block">
-                        <BellIcon className="h-6 w-6 cursor-pointer text-slate-700" />
+                    <div
+                        className="p-2 hover:bg-slate-100 rounded-lg cursor-pointer"
+                        onClick={() =>
+                            setTheme((prevTheme) =>
+                                prevTheme === "dark" ? "light" : "dark",
+                            )
+                        }
+                    >
+                        {theme === "dark" ? (
+                            <SunIcon className="text-slate-700 h-6 w-6" />
+                        ) : (
+                            <MoonIcon className="text-slate-700 h-6 w-6" />
+                        )}
                     </div>
-                    <div className="ml-2 flex items-center justify-center gap-2">
+                    <div className="p-2 hidden sm:block hover:bg-slate-100 rounded-lg cursor-pointer">
+                        <BellIcon className="h-6 w-6 text-slate-700" />
+                    </div>
+                    <div className="border-l flex items-center justify-center gap-2">
                         <div>
                             <Dropdown>
                                 <Dropdown.Trigger>
