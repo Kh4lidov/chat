@@ -21,7 +21,7 @@ import useTheme from "@/Hooks/UseTheme.jsx";
 
 export default function Authenticated({ user, children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useSidebar();
-    const [theme, setTheme] = useTheme();
+    const [isDarkMode, toggleDarkMode] = useTheme();
 
     return (
         <div className="min-h-screen flex w-full bg-white text-slate-800">
@@ -36,13 +36,9 @@ export default function Authenticated({ user, children }) {
                 <div className="flex items-center gap-2">
                     <div
                         className="p-2 hover:bg-slate-100 rounded-lg cursor-pointer"
-                        onClick={() =>
-                            setTheme((prevTheme) =>
-                                prevTheme === "dark" ? "light" : "dark",
-                            )
-                        }
+                        onClick={toggleDarkMode}
                     >
-                        {theme === "dark" ? (
+                        {isDarkMode ? (
                             <SunIcon className="text-slate-700 h-6 w-6" />
                         ) : (
                             <MoonIcon className="text-slate-700 h-6 w-6" />

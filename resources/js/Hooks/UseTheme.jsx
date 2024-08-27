@@ -8,10 +8,16 @@ export default function useTheme() {
         return savedTheme ? savedTheme : "light";
     });
 
+    const isDarkMode = theme === "dark";
+
+    const toggleDarkMode = () => {
+        setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+    };
+
     useEffect(() => {
-        document.documentElement.classList.toggle("dark", theme === "dark");
+        document.documentElement.classList.toggle("dark", isDarkMode);
         localStorage.setItem(THEME_STATE_KEY, theme);
     }, [theme]);
 
-    return [theme, setTheme];
+    return [isDarkMode, toggleDarkMode];
 }
