@@ -1,2 +1,6 @@
-User-agent: GPTBot
-allow: /
+User-agent: *
+Allow: /
+
+User-agent: gptbot
+Allow: /
+
