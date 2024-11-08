@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+//test commit
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
